@@ -3,14 +3,14 @@ project(cxx-tasks VERSION 0.2.1 LANGUAGES CXX DESCRIPTION "Home tasks for C++ tr
 
 set(CMAKE_CXX_STANDARD 20)
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    add_compile_options(-Wall -Wextra -pedantic -Werror)
+    add_compile_options(-Wall -Wextra -pedantic -Werror -fdiagnostic-color=always)
     if(CMAKE_BUILD_TYPE STREQUAL Debug)
         add_compile_definitions(_GLIBCXX_DEBUG=1)
     endif()
 endif()
 
 find_package(Catch2 3 REQUIRED)
-find_package(Boost 1.79 REQUIRED)
+find_package(Boost 1.71 REQUIRED)
 
 include(CTest)
 include(Catch)
