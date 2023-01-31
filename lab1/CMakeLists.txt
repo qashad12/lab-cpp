@@ -1,4 +1,4 @@
-# return() # Remove this line
+return() # Remove this line
 add_library(introduction INTERFACE)
 target_include_directories(introduction INTERFACE include)
 

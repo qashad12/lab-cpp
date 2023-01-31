@@ -9,28 +9,26 @@
 
 #include <string>
 
-class lol {};
 //{
 class introduction
 {
 public:
     std::string_view name() const
     {
-        return "Gleb";
+        return ...
     }
 
     std::string_view surename() const
     {
-        return "Moroz";
+        return ...
     }
 
     std::string fullname() const
     {
-        return _full_name;
+        return ...
     }
 
 private:
-    const char *_full_name = "Gleb Moroz";
 };
 //}
 
