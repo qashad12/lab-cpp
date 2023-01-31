@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <numeric>
 #include <vector>
+#include <iostream>
 
 #include <catch2/catch_all.hpp>
 
@@ -45,7 +46,7 @@ public:
         return image_iterator(data.end(), width_, stride_);
     }
 
-private:
+//private:
     Container data; // image data including strides. Access by (x, y): data[y * stride_ + x]
     size_t width_;
     size_t stride_;
@@ -97,6 +98,7 @@ TEST_CASE("iterator::operations")
     {
         it += 130;
         CHECK(std::distance(myimage.begin(), it) == 130);
+        std::cout << "------------------" << it.rf() - myimage.begin().rf()<<"\n";
         it -= 50;
         CHECK(std::distance(myimage.begin(), it) == 80);
         it += 289;
