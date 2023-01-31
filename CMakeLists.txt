@@ -10,7 +10,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
 endif()
 
 find_package(Catch2 3 REQUIRED)
-find_package(Boost 1.79 REQUIRED)
+find_package(Boost 1.71 REQUIRED)
 
 include(CTest)
 include(Catch)
