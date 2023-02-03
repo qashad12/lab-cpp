@@ -16,69 +16,42 @@
 
 //{ image iterator
 template<class Iterator>
-class image_iterator : public boost::iterator_adaptor<
-    image_iterator<Iterator>,
-    Iterator
->
+class image_iterator: public boost::iterator_adaptor<image_iterator<Iterator>,Iterator>
 {
 public:
-    image_iterator(Iterator iterator, size_t w, size_t s) :
-        base_class(iterator), w(w), s(s), start(iterator)
-    {}
-    Iterator rf() { return this->base_reference(); }
+    int width;
+    int stride;
+    Iterator row;
+    image_iterator(Iterator it, size_t width, size_t stride) :
+        boost::iterator_adaptor<image_iterator<Iterator>, Iterator>(it),
+        width(width),
+        stride(stride)
+    {
+        row = this->base_reference();
+    }
 
 private:
     friend class boost::iterator_core_access;
-    typedef boost::iterator_adaptor<
-        image_iterator<Iterator>,
-        Iterator
-    > base_class;
 
-    std::ptrdiff_t w, s;
-    Iterator start;
-
-    void increment()
-    {
-        //++this->base_reference();
-        advance(1);
-    }
-
-    void decrement()
-    {
-        //--this->base_reference();
-        advance(-1);
-    }
+    void increment() { advance(1); }
+    void decrement() { advance(-1); }
 
     void advance(typename image_iterator::difference_type n)
     {
-        if (n < 0) {
-            n = -n;
-            this->base_reference() -= (n / w) * s;
-            n %= w;
-            if ((this->base_reference() - start) % s < n)
-                this->base_reference() -= n + s - w;
-            else
-                this->base_reference() -= n;
-        } else {
-            this->base_reference() += (n / w) * s;
-            n %= w;
-            if ((this->base_reference() - start) % s + n >= w)
-                this->base_reference() += n + s - w;
-            else
-                this->base_reference() += n;
-        }
+        double d = this->base_reference() - row + n;
+        std::ptrdiff_t delta = floor(d / width);
+        std::ptrdiff_t col = d - delta * width;
+        this->base_reference() += delta * stride + col - (this->base_reference() - row);
+        row += delta * stride;
     }
 
-    typename image_iterator::difference_type distance_to(const image_iterator &it) const
+    typename image_iterator::difference_type distance_to(const image_iterator& i) const
     {
-        std::ptrdiff_t d = it.base_reference() - this->base_reference();
-        if (d >= 0) {
-            return d / s * w + d % w;
-        } else {
-            d = -d;
-            return -(d / s * w + d % w);
-        }
+        auto d = (i.base_reference() - i.row) - (this->base_reference() - row);
+        auto e = i.row - row;
+        return e / stride * width + d;
     }
+
 };
 //}
 

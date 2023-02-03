@@ -98,7 +98,6 @@ TEST_CASE("iterator::operations")
     {
         it += 130;
         CHECK(std::distance(myimage.begin(), it) == 130);
-        std::cout << "------------------" << it.rf() - myimage.begin().rf()<<"\n";
         it -= 50;
         CHECK(std::distance(myimage.begin(), it) == 80);
         it += 289;
