@@ -14,48 +14,84 @@
 
 #include <boost/variant.hpp>
 
-//{ number
-using number = ...;
+ //{ number
+using number = std::variant<int, float>;
 //}
 
 //{ array
-using array = ...;
+using array = std::vector<number>;
 //}
 
 //{ recursive_array
-struct recursive_array : public ...
+struct recursive_array :
+    public std::vector<
+        std::variant<number,
+            std::shared_ptr<recursive_array>
+        >
+    >
 {
-
+    using vector::vector;
 };
 //}
 
 //{ recursive_array2
-struct recursive_array2 : public ...
+struct recursive_array2 :
+    public std::vector<
+        std::variant<number,
+            boost::recursive_wrapper<recursive_array2>
+        >
+    >
 {
-
+    using vector::vector;
 };
 //}
 
 //{ variant_decorator
-template<???>
-struct variant_decorator
+template<typename... Args>
+struct variant_decorator : public std::variant<Args...>
 {
-    ?? as() const
-    {
+    using variant_decorator::variant::variant;
 
+    template<class T>
+    T &as()
+    {
+        return const_cast<T &>(__as<T>());
     }
 
-    ?? as()
+    template<class T>
+    T const &as() const
     {
-        return ??as()??;
+        return __as<T>();
+    }
+
+private:
+    template <class T>
+    T const &__as() const
+    {
+        if constexpr (std::disjunction_v<std::is_same<boost::recursive_wrapper<T>, Args>...>)
+        {
+            return std::get<boost::recursive_wrapper<T>>(*this).get();
+        }
+        else
+        {
+            return std::get<T>(*this);
+        }
     }
 };
 //}
 
 //{ recursive_map
-struct recursive_map : public ...
+struct recursive_map :
+    public std::map<
+        std::string,
+        variant_decorator<
+            int,
+            std::string,
+            boost::recursive_wrapper<recursive_map>, bool
+        >
+    >
 {
-
+    using map::map;
 };
 //}
 
